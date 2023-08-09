@@ -1,0 +1,86 @@
+CREATE TABLE IF NOT EXISTS cubnb.tenant(tenant_id int PRIMARY KEY,
+							mobile bigint,
+							password text,
+							tenant_name text);
+
+
+
+
+
+
+CREATE TABLE IF NOT EXISTS cubnb.property(property_id int, 
+							property_name text, 
+							host_id int,
+							location text,
+							type text,
+							price int,
+							number_of_rooms int,
+							max_occupancy int,
+							number_of_reviews int,
+							amenities set<text>,
+							status text,
+							PRIMARY KEY((property_id, host_id)));
+
+CREATE TABLE IF NOT EXISTS cubnb.booking(booking_id int,
+							property_id int,
+							total_occupancy int,
+							tenant_id int,
+							status text,
+							no_of_days int,
+							start_date date,
+							end_date date,
+							PRIMARY KEY((booking_id, property_id, tenant_id)));
+
+SELECT booking_id, property_id, tenant_id, no_of_days FROM booking WHERE tenant_id = 80855 AND start_date >= '2022-02-01' AND end_date <= '2022-02-28' ALLOW FILTERING;
+
+SELECT COUNT(*)
+from cubnb.property 
+WHERE number_of_reviews > 200
+ALLOW FILTERING;
+
+SELECT property_name, location, type, status
+FROM cubnb.property
+WHERE location = 'Brooklyn' AND
+type = 'Apartment' AND
+status = 'available'
+ALLOW FILTERING;
+
+SELECT property_name, host_id, amenities
+FROM cubnb.property
+WHERE host_id = 1029
+ALLOW FILTERING;
+
+UPDATE cubnb.property
+SET amenities = amenities + {'Heater'}
+WHERE host_id = 1029
+AND
+property_id IN (8, 46, 165, 122, 7, 97);
+
+INSERT INTO tenant (tenant_id, mobile, password, tenant_name)
+VALUES(3287, 3033058712, '3033058712', 'random_tenant');
+
+UPDATE tenant
+SET password = 'password@123'
+WHERE tenant_id = 3287;
+
+UPDATE property
+SET amenities = amenities - {'GardenView'}
+WHERE host_id = 1012 AND
+property_id = 110;
+
+SELECT property_name, amenities,price 
+FROM property
+WHERE amenities CONTAINS 'BeachView' AND
+price > 1000
+ALLOW FILTERING;
+
+SELECT MAX(max_occupancy) 
+FROM property 
+WHERE number_of_rooms = 8
+ALLOW FILTERING;
+
+SELECT COUNT(*)
+FROM property
+WHERE number_of_rooms = 8 AND
+max_occupancy = 16 
+ALLOW FILTERING;
